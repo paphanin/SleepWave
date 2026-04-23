@@ -1,0 +1,75 @@
+What to build
+A personal sleep optimization HTML web app (runs in Chrome on Mac) for a single user. It connects to a Polar H10 chest strap via Web Bluetooth API to stream live heart rate and HRV data while the user sleeps. The app plays AI-selected audio (binaural beats, white/brown/pink noise, nature sounds) and dynamically adjusts volume and sound type in real time based on the user's physiological signals and research-backed sleep science. The screen goes fully black during a session. In the morning, it shows a single Sleep Score (0–100) plus a detailed log of every audio decision made during the night — what played, at what volume, and why.
+
+Hardware requirement
+Polar H10 chest strap (฿3,890, available at Vinasport Thailand). This is the only supported sensor for V1. The H10 streams raw RR intervals over standard Bluetooth LE, which the Web Bluetooth API in Chrome can read directly — no intermediary app needed.
+
+Core action
+Open the web app in Chrome on Mac, tap "Start Sleep Session." The app connects to the H10, dims then fully blacks out the screen, begins playing AI-selected audio, and runs autonomously through the night — adjusting sounds based on live biometric signals and logging every decision — until the user wakes and moves the mouse or taps a key to reveal the "End Session" button.
+
+Success moment
+You wake up, wiggle the mouse, tap End Session, and see a Sleep Score of 84. You scroll through the night's audio log and understand exactly what your body did and how the app responded. The audio was barely noticeable. Your HRV trended upward. No decisions were made. It just worked.
+
+Screens and flow
+1. Home screen (first open)
+User sees a single large "Start Sleep Session" button. A small status indicator shows whether the Polar H10 is connected (green dot = connected, gray = searching). If not connected, a subtle prompt says "Looking for your Polar H10 via Bluetooth..." — the button is disabled until connection is confirmed. No other setup required on first launch. A gear icon in the corner gives access to settings.
+
+2. Active session screen updated
+After tapping Start, the screen fades to pure black within 5 seconds. All session activity (audio decisions, volume changes, biometric readings) is logged silently in memory. To reveal the End Session button, the user moves the mouse or presses any key — a minimal dark UI fades in briefly showing current HR, HRV, active sound, and an "End Session" button. If no interaction for 10 seconds, the screen returns to black. The Mac's own screen sleep should be disabled while a session is active (instruct the user to set this in System Settings, or use the Wake Lock API if available in Chrome).
+
+3. Morning report screen updated
+After ending a session, the user sees: (a) a large Sleep Score (0–100) with a color ring (red/amber/green); (b) a compact metric row showing HRV trend, RHR, respiratory rate, and stress index; (c) an HRV sparkline chart across the night; (d) a full audio decision log — a timestamped timeline of every sound played, volume level, and a plain-English reason (e.g. "22:14 — HRV dropped below baseline, switched to 40Hz gamma binaural, reduced volume to 30%"). The log is scrollable. A 7-night history tab shows past scores.
+
+4. Settings
+Gear icon top-right of home screen. Contains: Bluetooth device pairing, audio preference override (if user wants to lock a sound type), screen blackout toggle, and a reminder to disable Mac screen sleep in System Settings before bed.
+
+V1 features
+Polar H10 Web Bluetooth connection
+Real-time AI audio selection + volume control
+Full screen blackout during session
+Morning Sleep Score (0–100)
+Audio decision log with reasons
+7-night score history
+
+Not in V1
+Any sensor other than Polar H10
+Mobile / iOS / Android support
+Alarm / smart wake feature
+Multi-user or social features
+Custom sound uploads
+
+Key things the app deals with
+Sleep session
+One overnight recording, start to end
+
+RR interval
+Raw beat-to-beat data from H10
+
+Audio event
+A timestamped sound + volume + reason
+
+Sleep score
+0–100 composite metric per session
+
+Biometric snapshot
+HR, HRV, respiratory rate at a timestamp
+
+Audio log
+Full timeline of decisions for the night
+
+Technical notes for the builder
+Use the Web Bluetooth API in Chrome to connect to the Polar H10 and read the Heart Rate Measurement GATT characteristic (UUID 0x2A37), which includes RR interval data. Calculate RMSSD from RR intervals for real-time HRV. Use the Web Audio API for sound generation and crossfading. Use the Screen Wake Lock API (navigator.wakeLock) to prevent the OS from sleeping the display independently — note this keeps the screen on at full brightness, so the app must set document.documentElement style brightness to 0 to achieve the black screen effect. All session data should be stored in localStorage so the morning report survives a page refresh.
+
+Edge cases to handle
+H10 disconnects mid-session — pause audio, attempt auto-reconnect for 60s, show a brief on-screen notice when mouse is moved; log the gap in the audio timeline
+
+No session data yet — home screen shows empty state: "Start your first session tonight to see your Sleep Score"
+
+Session shorter than 30 min — flag score as incomplete, exclude from 7-night average
+
+RR signal noisy or flatlines — fall back to heart rate only for audio decisions; mark affected segments in the audio log as "low data quality"
+
+User closes the tab mid-session — warn with a browser beforeunload dialog: "Sleep session in progress — are you sure you want to leave?"
+
+Wake Lock API not supported — show a one-time warning at session start: "Your browser may sleep the screen. For best results, disable screen sleep in System Settings."
+
