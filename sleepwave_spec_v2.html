@@ -1,0 +1,148 @@
+
+<style>
+  .spec { padding: 1.5rem 0; max-width: 640px; }
+  .app-name { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 4px; }
+  .app-tag { font-size: 14px; color: var(--color-text-secondary); margin: 0 0 6px; }
+  .version-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--color-background-info); color: var(--color-text-info); margin-bottom: 2rem; }
+  .section { margin-bottom: 1.75rem; }
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-tertiary); margin: 0 0 6px; }
+  .section-body { font-size: 15px; color: var(--color-text-primary); line-height: 1.65; margin: 0; }
+  .divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.75rem 0; }
+  .pill-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill { font-size: 13px; padding: 4px 12px; border-radius: 999px; border: 0.5px solid var(--color-border-secondary); color: var(--color-text-secondary); background: var(--color-background-secondary); }
+  .pill.in { background: #E1F5EE; color: #0F6E56; border-color: #5DCAA5; }
+  .pill.out { background: #FCEBEB; color: #A32D2D; border-color: #F09595; }
+  .pill.changed { background: #FAEEDA; color: #633806; border-color: #EF9F27; }
+  .screen-card { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .screen-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 4px; }
+  .screen-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin: 0; }
+  .noun-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+  .noun-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; }
+  .noun-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 2px; }
+  .noun-desc { font-size: 12px; color: var(--color-text-secondary); margin: 0; }
+  .edge-item { font-size: 13px; color: var(--color-text-secondary); padding: 6px 0; border-bottom: 0.5px solid var(--color-border-tertiary); line-height: 1.5; }
+  .edge-item:last-child { border-bottom: none; }
+  .change-note { font-size: 12px; color: #854F0B; background: #FAEEDA; border-radius: var(--border-radius-md); padding: 2px 8px; display: inline-block; margin-left: 8px; vertical-align: middle; }
+</style>
+
+<div class="spec">
+  <h2 class="sr-only">Updated app spec v2 for SleepWave — HTML web app with Polar H10, screen blackout, and audio log</h2>
+
+  <p class="app-name">SleepWave</p>
+  <p class="app-tag">Real-time HRV-driven sleep audio optimizer</p>
+  <span class="version-badge">v2 — updated spec</span>
+
+  <div class="section">
+    <p class="section-label">What to build</p>
+    <p class="section-body">A personal sleep optimization HTML web app (runs in Chrome on Mac) for a single user. It connects to a Polar H10 chest strap via Web Bluetooth API to stream live heart rate and HRV data while the user sleeps. The app plays AI-selected audio (binaural beats, white/brown/pink noise, nature sounds) and dynamically adjusts volume and sound type in real time based on the user's physiological signals and research-backed sleep science. The screen goes fully black during a session. In the morning, it shows a single Sleep Score (0–100) plus a detailed log of every audio decision made during the night — what played, at what volume, and why.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <p class="section-label">Hardware requirement</p>
+    <p class="section-body">Polar H10 chest strap (฿3,890, available at Vinasport Thailand). This is the only supported sensor for V1. The H10 streams raw RR intervals over standard Bluetooth LE, which the Web Bluetooth API in Chrome can read directly — no intermediary app needed.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <p class="section-label">Core action</p>
+    <p class="section-body">Open the web app in Chrome on Mac, tap "Start Sleep Session." The app connects to the H10, dims then fully blacks out the screen, begins playing AI-selected audio, and runs autonomously through the night — adjusting sounds based on live biometric signals and logging every decision — until the user wakes and moves the mouse or taps a key to reveal the "End Session" button.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <p class="section-label">Success moment</p>
+    <p class="section-body">You wake up, wiggle the mouse, tap End Session, and see a Sleep Score of 84. You scroll through the night's audio log and understand exactly what your body did and how the app responded. The audio was barely noticeable. Your HRV trended upward. No decisions were made. It just worked.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <p class="section-label">Screens and flow</p>
+
+    <div class="screen-card">
+      <p class="screen-title">1. Home screen (first open)</p>
+      <p class="screen-desc">User sees a single large "Start Sleep Session" button. A small status indicator shows whether the Polar H10 is connected (green dot = connected, gray = searching). If not connected, a subtle prompt says "Looking for your Polar H10 via Bluetooth..." — the button is disabled until connection is confirmed. No other setup required on first launch. A gear icon in the corner gives access to settings.</p>
+    </div>
+
+    <div class="screen-card">
+      <p class="screen-title">2. Active session screen <span class="change-note">updated</span></p>
+      <p class="screen-desc">After tapping Start, the screen fades to pure black within 5 seconds. All session activity (audio decisions, volume changes, biometric readings) is logged silently in memory. To reveal the End Session button, the user moves the mouse or presses any key — a minimal dark UI fades in briefly showing current HR, HRV, active sound, and an "End Session" button. If no interaction for 10 seconds, the screen returns to black. The Mac's own screen sleep should be disabled while a session is active (instruct the user to set this in System Settings, or use the Wake Lock API if available in Chrome).</p>
+    </div>
+
+    <div class="screen-card">
+      <p class="screen-title">3. Morning report screen <span class="change-note">updated</span></p>
+      <p class="screen-desc">After ending a session, the user sees: (a) a large Sleep Score (0–100) with a color ring (red/amber/green); (b) a compact metric row showing HRV trend, RHR, respiratory rate, and stress index; (c) an HRV sparkline chart across the night; (d) a full audio decision log — a timestamped timeline of every sound played, volume level, and a plain-English reason (e.g. "22:14 — HRV dropped below baseline, switched to 40Hz gamma binaural, reduced volume to 30%"). The log is scrollable. A 7-night history tab shows past scores.</p>
+    </div>
+
+    <div class="screen-card">
+      <p class="screen-title">4. Settings</p>
+      <p class="screen-desc">Gear icon top-right of home screen. Contains: Bluetooth device pairing, audio preference override (if user wants to lock a sound type), screen blackout toggle, and a reminder to disable Mac screen sleep in System Settings before bed.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <p class="section-label">V1 features</p>
+    <div class="pill-grid">
+      <span class="pill in">Polar H10 Web Bluetooth connection</span>
+      <span class="pill in">Real-time AI audio selection + volume control</span>
+      <span class="pill in">Full screen blackout during session</span>
+      <span class="pill in">Morning Sleep Score (0–100)</span>
+      <span class="pill in">Audio decision log with reasons</span>
+      <span class="pill in">7-night score history</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <p class="section-label">Not in V1</p>
+    <div class="pill-grid">
+      <span class="pill out">Any sensor other than Polar H10</span>
+      <span class="pill out">Mobile / iOS / Android support</span>
+      <span class="pill out">Alarm / smart wake feature</span>
+      <span class="pill out">Multi-user or social features</span>
+      <span class="pill out">Custom sound uploads</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <p class="section-label">Key things the app deals with</p>
+    <div class="noun-grid">
+      <div class="noun-card"><p class="noun-name">Sleep session</p><p class="noun-desc">One overnight recording, start to end</p></div>
+      <div class="noun-card"><p class="noun-name">RR interval</p><p class="noun-desc">Raw beat-to-beat data from H10</p></div>
+      <div class="noun-card"><p class="noun-name">Audio event</p><p class="noun-desc">A timestamped sound + volume + reason</p></div>
+      <div class="noun-card"><p class="noun-name">Sleep score</p><p class="noun-desc">0–100 composite metric per session</p></div>
+      <div class="noun-card"><p class="noun-name">Biometric snapshot</p><p class="noun-desc">HR, HRV, respiratory rate at a timestamp</p></div>
+      <div class="noun-card"><p class="noun-name">Audio log</p><p class="noun-desc">Full timeline of decisions for the night</p></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <p class="section-label">Technical notes for the builder</p>
+    <p class="section-body" style="font-size:13px;">Use the Web Bluetooth API in Chrome to connect to the Polar H10 and read the Heart Rate Measurement GATT characteristic (UUID 0x2A37), which includes RR interval data. Calculate RMSSD from RR intervals for real-time HRV. Use the Web Audio API for sound generation and crossfading. Use the Screen Wake Lock API (navigator.wakeLock) to prevent the OS from sleeping the display independently — note this keeps the screen on at full brightness, so the app must set document.documentElement style brightness to 0 to achieve the black screen effect. All session data should be stored in localStorage so the morning report survives a page refresh.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <p class="section-label">Edge cases to handle</p>
+    <div>
+      <p class="edge-item"><strong>H10 disconnects mid-session</strong> — pause audio, attempt auto-reconnect for 60s, show a brief on-screen notice when mouse is moved; log the gap in the audio timeline</p>
+      <p class="edge-item"><strong>No session data yet</strong> — home screen shows empty state: "Start your first session tonight to see your Sleep Score"</p>
+      <p class="edge-item"><strong>Session shorter than 30 min</strong> — flag score as incomplete, exclude from 7-night average</p>
+      <p class="edge-item"><strong>RR signal noisy or flatlines</strong> — fall back to heart rate only for audio decisions; mark affected segments in the audio log as "low data quality"</p>
+      <p class="edge-item"><strong>User closes the tab mid-session</strong> — warn with a browser beforeunload dialog: "Sleep session in progress — are you sure you want to leave?"</p>
+      <p class="edge-item"><strong>Wake Lock API not supported</strong> — show a one-time warning at session start: "Your browser may sleep the screen. For best results, disable screen sleep in System Settings."</p>
+    </div>
+  </div>
+</div>
